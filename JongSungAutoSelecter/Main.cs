@@ -1,5 +1,5 @@
 ﻿namespace JongSungAutoSelecter;
-public class Main
+public class SingleWord
 {
     StrUtility strUtility = new StrUtility();
 }
