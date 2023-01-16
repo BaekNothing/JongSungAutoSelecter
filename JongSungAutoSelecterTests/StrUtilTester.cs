@@ -7,7 +7,7 @@ namespace JongSungAutoSelecterTests;
 public class Tester_StrUtility
 {
     [Fact]
-    public void Test_ConvertStringToUInt32()
+    public void ConvertStringToUInt32()
     {
         StrUtility strUtility = new StrUtility();
         Assert.Equal(new uint[]{(uint)0xAC00}, strUtility.ConvertStringToUInt32("가"));
@@ -71,6 +71,38 @@ public class Tester_StrUtility
         Assert.False(strUtility.CheckWordHasJongSung(strUtility.ConvertStringToUInt32("바")[0]));
         Assert.False(strUtility.CheckWordHasJongSung(strUtility.ConvertStringToUInt32("사")[0]));
         Assert.False(strUtility.CheckWordHasJongSung(strUtility.ConvertStringToUInt32("자")[0]));
+    }
+
+    [Fact]
+    public void isMatchTopicPattern(){
+        StrUtility strUtility = new StrUtility();
+        Assert.True(strUtility.isMatchTopicPattern("테스트은/는"));
+        Assert.True(strUtility.isMatchTopicPattern("테스트은(는)"));
+        Assert.True(strUtility.isMatchTopicPattern("테스트은(는"));
+        Assert.False(strUtility.isMatchTopicPattern("테스트"));
+        Assert.False(strUtility.isMatchTopicPattern("테스트12314"));
+        Assert.False(strUtility.isMatchTopicPattern("테스트이/가"));
+    }
+
+    [Fact]
+    public void isMatchObjectPattern(){
+        StrUtility strUtility = new StrUtility();
+        Assert.True(strUtility.isMatchObjectPattern("테스트을/를"));
+        Assert.True(strUtility.isMatchObjectPattern("테스트을(를)"));
+        Assert.True(strUtility.isMatchObjectPattern("테스트을(를"));
+        Assert.False(strUtility.isMatchObjectPattern("테스트"));
+        Assert.False(strUtility.isMatchObjectPattern("테스트12314"));
+        Assert.False(strUtility.isMatchObjectPattern("테스트이/가"));
+    }
+
+    public void isMatchSubejctPattern(){
+        StrUtility strUtility = new StrUtility();
+        Assert.True(strUtility.isMatchSubjectPattern("테스트이/가"));
+        Assert.True(strUtility.isMatchSubjectPattern("테스트이(가)"));
+        Assert.True(strUtility.isMatchSubjectPattern("테스트이(가"));
+        Assert.False(strUtility.isMatchSubjectPattern("테스트"));
+        Assert.False(strUtility.isMatchSubjectPattern("테스트12314"));
+        Assert.False(strUtility.isMatchSubjectPattern("테스트은/는"));
     }
 
 }

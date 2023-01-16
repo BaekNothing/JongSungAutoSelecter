@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JongSungAutoSelecter;
 
-
 public class StrUtility
 {
+#region single word utility
     public bool CheckWordHasJongSung(in string str)
     {
         UInt32[] unicodeInts = ConvertStringToUInt32(str);
@@ -60,4 +61,35 @@ public class StrUtility
     {
         return (inputByte - 0xAC00) % 28 != 0;
     }
+
+    const string TOPIC_JONGSUNG = "은";
+    const string TOPIC_WITHOUT_JONGSUNG = "는";
+    readonly Regex topicRegex = new Regex(@"은[/(]는");
+    public bool isMatchTopicPattern(in string str)
+    {
+        return topicRegex.IsMatch(str);
+    }
+
+    const string OBJECT_JONGSUNG = "을";
+    const string OBJECT_WITHOUT_JONGSUNG = "를";
+    readonly Regex objectRegex = new Regex(@"을[/(]를");
+    public bool isMatchObjectPattern(in string str)
+    {
+        return objectRegex.IsMatch(str);
+    }
+
+    const string SUBJECT_JONGSUNG = "이";
+    const string SUBJECT_WITHOUT_JONGSUNG = "가";
+    readonly Regex subjectRegex = new Regex(@"이[/(]가");
+    public bool isMatchSubjectPattern(in string str)
+    {
+        return subjectRegex.IsMatch(str);
+    }
+
+#endregion
+
+#region paragraph utility
+    
+
+#endregion
 }
