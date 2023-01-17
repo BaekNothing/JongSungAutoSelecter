@@ -74,35 +74,23 @@ public class Tester_StrUtility
     }
 
     [Fact]
-    public void isMatchTopicPattern(){
+    public void SelectJongSungInPattern()
+    {
         StrUtility strUtility = new StrUtility();
-        Assert.True(strUtility.isMatchTopicPattern("테스트은/는"));
-        Assert.True(strUtility.isMatchTopicPattern("테스트은(는)"));
-        Assert.True(strUtility.isMatchTopicPattern("테스트은(는"));
-        Assert.False(strUtility.isMatchTopicPattern("테스트"));
-        Assert.False(strUtility.isMatchTopicPattern("테스트12314"));
-        Assert.False(strUtility.isMatchTopicPattern("테스트이/가"));
+        string originStr = "테스트은(는)";
+        Assert.Equal("테스트는", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr));
+        originStr = "백승열은(는)";
+        Assert.Equal("백승열은", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr));
+        originStr = "테스트은/는";
+        Assert.Equal("테스트는", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr));
+        originStr = "백승열은/는";
+        Assert.Equal("백승열은", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr));
+        
     }
 
-    [Fact]
-    public void isMatchObjectPattern(){
-        StrUtility strUtility = new StrUtility();
-        Assert.True(strUtility.isMatchObjectPattern("테스트을/를"));
-        Assert.True(strUtility.isMatchObjectPattern("테스트을(를)"));
-        Assert.True(strUtility.isMatchObjectPattern("테스트을(를"));
-        Assert.False(strUtility.isMatchObjectPattern("테스트"));
-        Assert.False(strUtility.isMatchObjectPattern("테스트12314"));
-        Assert.False(strUtility.isMatchObjectPattern("테스트이/가"));
-    }
-
-    public void isMatchSubejctPattern(){
-        StrUtility strUtility = new StrUtility();
-        Assert.True(strUtility.isMatchSubjectPattern("테스트이/가"));
-        Assert.True(strUtility.isMatchSubjectPattern("테스트이(가)"));
-        Assert.True(strUtility.isMatchSubjectPattern("테스트이(가"));
-        Assert.False(strUtility.isMatchSubjectPattern("테스트"));
-        Assert.False(strUtility.isMatchSubjectPattern("테스트12314"));
-        Assert.False(strUtility.isMatchSubjectPattern("테스트은/는"));
-    }
 
 }

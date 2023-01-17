@@ -64,32 +64,65 @@ public class StrUtility
 
     const string TOPIC_JONGSUNG = "은";
     const string TOPIC_WITHOUT_JONGSUNG = "는";
-    readonly Regex topicRegex = new Regex(@"은[/(]는");
-    public bool isMatchTopicPattern(in string str)
-    {
-        return topicRegex.IsMatch(str);
-    }
-
+    public readonly Regex topicRegex = new Regex(@"은[/(]는");
+    
     const string OBJECT_JONGSUNG = "을";
     const string OBJECT_WITHOUT_JONGSUNG = "를";
-    readonly Regex objectRegex = new Regex(@"을[/(]를");
-    public bool isMatchObjectPattern(in string str)
-    {
-        return objectRegex.IsMatch(str);
-    }
+    public readonly Regex objectRegex = new Regex(@"을[/(]를");
 
     const string SUBJECT_JONGSUNG = "이";
     const string SUBJECT_WITHOUT_JONGSUNG = "가";
-    readonly Regex subjectRegex = new Regex(@"이[/(]가");
-    public bool isMatchSubjectPattern(in string str)
+    public readonly Regex subjectRegex = new Regex(@"이[/(]가");
+    
+    public string SelectJongSungInPattern(Match match, in string str)
     {
-        return subjectRegex.IsMatch(str);
+        StringBuilder sb = new StringBuilder();
+        string textBody = str.Substring(0, match.Index);
+        if(CheckWordHasJongSung(textBody))
+        {
+            sb.Append(textBody);
+            sb.Append(TOPIC_JONGSUNG);
+        }
+        else
+        {
+            sb.Append(textBody);
+            sb.Append(TOPIC_WITHOUT_JONGSUNG);
+        }
+        return sb.ToString();
     }
 
 #endregion
 
 #region paragraph utility
-    
+    public string SetParagraphJongSung(in string inputString)
+    {
+        StringBuilder sb = new StringBuilder();
+        string[] words = inputString.Split(' ');
+        foreach(string word in words)
+        {
+            int index = -1;
+            Match match;
+            if((match = topicRegex.Match(word)).Success)
+            {
+                index = match.Index;
+            }
+            else if((match = objectRegex.Match(word)).Success)
+            {
+                index = match.Index;
+            }
+            else if((match = subjectRegex.Match(word)).Success)
+            {
+                index = match.Index;
+            }
+            else
+            {
+                sb.Append(word);
+            }
+
+            sb.Append(" ");
+        }
+        return sb.ToString();
+    }
 
 #endregion
 }
