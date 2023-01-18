@@ -74,19 +74,19 @@ public class StrUtility
     const string SUBJECT_WITHOUT_JONGSUNG = "가";
     public readonly Regex subjectRegex = new Regex(@"이[/(]가");
     
-    public string SelectJongSungInPattern(Match match, in string str)
+    public string SelectJongSungInPattern(Match match, in string str, in string withJongSung, in string withoutJongSung)
     {
         StringBuilder sb = new StringBuilder();
         string textBody = str.Substring(0, match.Index);
         if(CheckWordHasJongSung(textBody))
         {
             sb.Append(textBody);
-            sb.Append(TOPIC_JONGSUNG);
+            sb.Append(withJongSung);
         }
         else
         {
             sb.Append(textBody);
-            sb.Append(TOPIC_WITHOUT_JONGSUNG);
+            sb.Append(withoutJongSung);
         }
         return sb.ToString();
     }
@@ -98,27 +98,25 @@ public class StrUtility
     {
         StringBuilder sb = new StringBuilder();
         string[] words = inputString.Split(' ');
-        foreach(string word in words)
+        for (int i = 0, count = words.Length; i < count; i++)
         {
-            int index = -1;
             Match match;
-            if((match = topicRegex.Match(word)).Success)
+            if((match = topicRegex.Match(words[i])).Success)
             {
-                index = match.Index;
+                words[i] = SelectJongSungInPattern(match, words[i], TOPIC_JONGSUNG, TOPIC_WITHOUT_JONGSUNG);
             }
-            else if((match = objectRegex.Match(word)).Success)
+            else if((match = objectRegex.Match(words[i])).Success)
             {
-                index = match.Index;
+                words[i] = SelectJongSungInPattern(match, words[i], OBJECT_JONGSUNG, OBJECT_WITHOUT_JONGSUNG);
             }
-            else if((match = subjectRegex.Match(word)).Success)
+            else if((match = subjectRegex.Match(words[i])).Success)
             {
-                index = match.Index;
+                words[i] = SelectJongSungInPattern(match, words[i], SUBJECT_JONGSUNG, SUBJECT_WITHOUT_JONGSUNG);
             }
             else
             {
-                sb.Append(word);
+                sb.Append(words[i]);
             }
-
             sb.Append(" ");
         }
         return sb.ToString();
