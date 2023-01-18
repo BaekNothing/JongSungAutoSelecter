@@ -1,35 +1,65 @@
-﻿namespace JongSungAutoSelecter;
+﻿using System;
+using System.Text;
+using System.Threading;
+
+namespace JongSungAutoSelecter;
 public class JSAutoSelecter
 {
     StrUtility strUtility = new StrUtility();
 
-    const string SUBJECT_JONGSUNG = "은";
-    const string SUBJECT_WITHOUT_JONGSUNG = "는";
-
-    readonly string[] JONGSUNG_PATTERNS = new string[]
+    public string SetParagraphWithThread(in string inputString)
     {
-        "은/는",
-        "은(는)",
-        "은{는}",
-    };
+        StringBuilder sb = new StringBuilder();
+        string[] words = inputString.Split(' ');
+        string[] result = new string[words.Length];
+        Thread[] threads = new Thread[words.Length];
 
-    public string SetJongSung(string originStr)
-    {
-        originStr = originStr.Trim();
-        string[] strs = originStr.Split(' ');
-        
-        for(int i = 0, count = strs.Length; i < count; i++)
+        for (int i = 0, count = words.Length; i < count; i++)
         {
-            if (strUtility.CheckWordHasJongSung(strs[i]))
-            {
-                strs[i] += SUBJECT_JONGSUNG;
-            }
-            else
-            {
-                strs[i] += SUBJECT_WITHOUT_JONGSUNG;
-            }
-        }    
+            threads[i] = new Thread(() => result[i] = SetOneWord(words[i]));
+            threads[i].Start();
+        }
 
-        return strs.Aggregate((a, b) => a + " " + b);
+        for (int i = 0, count = words.Length; i < count; i++)
+        {
+            threads[i].Join();
+            sb.Append(result[i]);
+            if (i != count - 1)
+                sb.Append(' ');
+        }
+
+        return sb.ToString();
+    }
+
+    public string SetParagraph(in string inputString)
+    {
+        StringBuilder sb = new StringBuilder();
+        string[] words = inputString.Split(' ');
+
+        for (int i = 0, count = words.Length; i < count; i++)
+        {
+            sb.Append(SetOneWord(words[i]));
+            if (i != count - 1)
+                sb.Append(' ');
+        }
+        return sb.ToString();
+    }
+
+    public string SetOneWord(string inputString)
+    {
+        Tuple<bool, string> result;
+
+        if((result = strUtility.CheckAndSelect(inputString)).Item1 == true)
+        {
+            return result.Item2;
+        }
+        else if ((result = strUtility.CheckAndCorrect(inputString)).Item1 == true)
+        {
+            return result.Item2;
+        }
+        else
+        {
+            return inputString;
+        }
     }
 }
