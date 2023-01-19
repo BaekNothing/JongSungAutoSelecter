@@ -7,7 +7,7 @@ namespace JongSungAutoSelecterTests;
 public class Tester_StrUtility
 {
     [Fact]
-    public void Test_ConvertStringToUInt32()
+    public void ConvertStringToUInt32()
     {
         StrUtility strUtility = new StrUtility();
         Assert.Equal(new uint[]{(uint)0xAC00}, strUtility.ConvertStringToUInt32("가"));
@@ -72,5 +72,94 @@ public class Tester_StrUtility
         Assert.False(strUtility.CheckWordHasJongSung(strUtility.ConvertStringToUInt32("사")[0]));
         Assert.False(strUtility.CheckWordHasJongSung(strUtility.ConvertStringToUInt32("자")[0]));
     }
+
+    [Fact]
+    public void SelectJongSungInPattern()
+    {
+        StrUtility strUtility = new StrUtility();
+        string originStr = "테스트은(는)";
+        Assert.Equal("테스트는", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr, "은", "는"));
+        originStr = "상품은(는)";
+        Assert.Equal("상품은", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr, "은", "는"));
+        originStr = "테스트은/는";
+        Assert.Equal("테스트는", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr, "은", "는"));
+        originStr = "상품은/는";
+        Assert.Equal("상품은", strUtility.SelectJongSungInPattern
+            (strUtility.topicRegex.Match(originStr) , originStr, "은", "는"));
+        
+        originStr = "테스트을(를)";
+        Assert.Equal("테스트를", strUtility.SelectJongSungInPattern
+            (strUtility.objectRegex.Match(originStr) , originStr, "을", "를"));
+        originStr = "상품을(를)";
+        Assert.Equal("상품을", strUtility.SelectJongSungInPattern
+            (strUtility.objectRegex.Match(originStr) , originStr, "을", "를"));
+        originStr = "테스트을/를";
+        Assert.Equal("테스트를", strUtility.SelectJongSungInPattern
+            (strUtility.objectRegex.Match(originStr) , originStr, "을", "를"));
+        originStr = "상품을/를";
+        Assert.Equal("상품을", strUtility.SelectJongSungInPattern
+            (strUtility.objectRegex.Match(originStr) , originStr, "을", "를"));
+        
+        originStr = "테스트이(가)";
+        Assert.Equal("테스트가", strUtility.SelectJongSungInPattern
+            (strUtility.subjectRegex.Match(originStr) , originStr, "이", "가"));
+        originStr = "상품이(가)";
+        Assert.Equal("상품이", strUtility.SelectJongSungInPattern
+            (strUtility.subjectRegex.Match(originStr) , originStr, "이", "가"));
+        originStr = "테스트이/가";
+        Assert.Equal("테스트가", strUtility.SelectJongSungInPattern
+            (strUtility.subjectRegex.Match(originStr) , originStr, "이", "가"));
+        originStr = "상품이/가";
+        Assert.Equal("상품이", strUtility.SelectJongSungInPattern
+            (strUtility.subjectRegex.Match(originStr) , originStr, "이", "가"));
+    }
+
+    [Fact]
+    public void CorrectJongSung()
+    {
+        StrUtility strUtility = new StrUtility();
+        string originStr = "테스트는";
+        Assert.Equal("테스트는", strUtility.CorrectJongSung
+            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
+        originStr = "상품은";
+        Assert.Equal("상품은", strUtility.CorrectJongSung
+            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
+        originStr = "테스트은";
+        Assert.Equal("테스트는", strUtility.CorrectJongSung
+            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
+        originStr = "상품는";
+        Assert.Equal("상품은", strUtility.CorrectJongSung
+            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
+        
+        originStr = "테스트을";
+        Assert.Equal("테스트를", strUtility.CorrectJongSung
+            (strUtility.objectEndRegex.Match(originStr) , originStr, "을", "를"));
+        originStr = "상품를";
+        Assert.Equal("상품을", strUtility.CorrectJongSung
+            (strUtility.objectEndRegex.Match(originStr) , originStr, "을", "를"));
+        originStr = "테스트을";
+        Assert.Equal("테스트를", strUtility.CorrectJongSung
+            (strUtility.objectEndRegex.Match(originStr) , originStr, "을", "를"));
+        originStr = "상품를";
+        Assert.Equal("상품을", strUtility.CorrectJongSung
+            (strUtility.objectEndRegex.Match(originStr) , originStr, "을", "를"));
+        
+        originStr = "테스트가";
+        Assert.Equal("테스트가", strUtility.CorrectJongSung
+            (strUtility.subjectEndRegex.Match(originStr) , originStr, "이", "가"));
+        originStr = "상품이";
+        Assert.Equal("상품이", strUtility.CorrectJongSung
+            (strUtility.subjectEndRegex.Match(originStr) , originStr, "이", "가"));
+        originStr = "테스트이";
+        Assert.Equal("테스트가", strUtility.CorrectJongSung
+            (strUtility.subjectEndRegex.Match(originStr) , originStr, "이", "가"));
+        originStr = "상품가";
+        Assert.Equal("상품이", strUtility.CorrectJongSung
+            (strUtility.subjectEndRegex.Match(originStr) , originStr, "이", "가"));
+    }
+
 
 }

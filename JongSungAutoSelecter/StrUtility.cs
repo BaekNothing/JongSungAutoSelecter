@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JongSungAutoSelecter;
 
-
 public class StrUtility
 {
+#region single word utility
     public bool CheckWordHasJongSung(in string str)
     {
         UInt32[] unicodeInts = ConvertStringToUInt32(str);
@@ -60,4 +61,118 @@ public class StrUtility
     {
         return (inputByte - 0xAC00) % 28 != 0;
     }
+
+    const string TOPIC_JONGSUNG = "은";
+    const string TOPIC_WITHOUT_JONGSUNG = "는";
+    public readonly Regex topicRegex = new Regex(@"은[/(]는");
+    public readonly Regex topicEndRegex = new Regex(@"[은는]$");
+    
+    const string OBJECT_JONGSUNG = "을";
+    const string OBJECT_WITHOUT_JONGSUNG = "를";
+    public readonly Regex objectRegex = new Regex(@"을[/(]를");
+    public readonly Regex objectEndRegex = new Regex(@"[을를]$");
+
+    const string SUBJECT_JONGSUNG = "이";
+    const string SUBJECT_WITHOUT_JONGSUNG = "가";
+    public readonly Regex subjectRegex = new Regex(@"이[/(]가");
+    public readonly Regex subjectEndRegex = new Regex(@"[이가]$");
+    
+    public string SelectJongSungInPattern(Match match, in string str, in string withJongSung, in string withoutJongSung)
+    {
+        StringBuilder sb = new StringBuilder();
+        string textBody = str.Substring(0, match.Index);
+        if(CheckWordHasJongSung(textBody))
+        {
+            sb.Append(textBody);
+            sb.Append(withJongSung);
+        }
+        else
+        {
+            sb.Append(textBody);
+            sb.Append(withoutJongSung);
+        }
+        return sb.ToString();
+    }
+
+    public string CorrectJongSung(Match match, in string str, in string withJongSung, in string withoutJongSung)
+    {
+        StringBuilder sb = new StringBuilder();
+        string textBody = str.Substring(0, match.Index);
+        if(CheckWordHasJongSung(textBody))
+        {
+            sb.Append(textBody);
+            sb.Append(withJongSung);
+        }
+        else
+        {
+            sb.Append(textBody);
+            sb.Append(withoutJongSung);
+        }
+        return sb.ToString();
+    }
+
+#endregion
+
+#region paragraph utility
+    public Tuple<bool, string> CheckAndSelect(in string inputString)
+    {
+        Tuple<bool, string> result;
+        Match match;
+
+        if((match = topicRegex.Match(inputString)).Success)
+        {
+            result = new Tuple<bool, string>(true,
+                SelectJongSungInPattern(match, inputString, 
+                TOPIC_JONGSUNG, TOPIC_WITHOUT_JONGSUNG));
+        }
+        else if((match = objectRegex.Match(inputString)).Success)
+        {
+            result = new Tuple<bool, string>(true,
+                SelectJongSungInPattern(match, inputString, 
+                OBJECT_JONGSUNG, OBJECT_WITHOUT_JONGSUNG));
+        }
+        else if((match = subjectRegex.Match(inputString)).Success)
+        {
+            result = new Tuple<bool, string>(true,
+                SelectJongSungInPattern(match, inputString,
+                SUBJECT_JONGSUNG, SUBJECT_WITHOUT_JONGSUNG));
+        }
+        else
+        {
+            result = new Tuple<bool, string>(false, string.Empty);
+        }
+
+        return result;
+    }
+
+    public Tuple<bool, string> CheckAndCorrect(in string inputString)
+    {
+        Tuple<bool, string> result;
+        Match match;
+
+        if((match = topicEndRegex.Match(inputString)).Success)
+        {
+            result = new Tuple<bool, string>(true,
+                CorrectJongSung(match, inputString,
+                TOPIC_JONGSUNG, TOPIC_WITHOUT_JONGSUNG));
+        }
+        else if((match = objectEndRegex.Match(inputString)).Success)
+        {
+            result = new Tuple<bool, string>(true,
+                CorrectJongSung(match, inputString, 
+                OBJECT_JONGSUNG, OBJECT_WITHOUT_JONGSUNG));
+        }
+        else if((match = subjectEndRegex.Match(inputString)).Success)
+        {
+            result = new Tuple<bool, string>(true,
+                CorrectJongSung(match, inputString,
+                SUBJECT_JONGSUNG, SUBJECT_WITHOUT_JONGSUNG));
+        }
+        else
+        {
+            result = new Tuple<bool, string>(false, string.Empty);
+        }
+        return result;
+    }
+#endregion
 }
