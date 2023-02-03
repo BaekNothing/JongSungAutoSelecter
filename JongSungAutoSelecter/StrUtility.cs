@@ -65,7 +65,6 @@ public class StrUtility
     const string TOPIC_JONGSUNG = "은";
     const string TOPIC_WITHOUT_JONGSUNG = "는";
     public readonly Regex topicRegex = new Regex(@"은[/(]는");
-    public readonly Regex topicEndRegex = new Regex(@"[은는]$");
     
     const string OBJECT_JONGSUNG = "을";
     const string OBJECT_WITHOUT_JONGSUNG = "를";
@@ -116,63 +115,55 @@ public class StrUtility
 #region paragraph utility
     public Tuple<bool, string> CheckAndSelect(in string inputString)
     {
-        Tuple<bool, string> result;
         Match match;
 
         if((match = topicRegex.Match(inputString)).Success)
         {
-            result = new Tuple<bool, string>(true,
+            return new Tuple<bool, string>(true,
                 SelectJongSungInPattern(match, inputString, 
                 TOPIC_JONGSUNG, TOPIC_WITHOUT_JONGSUNG));
         }
         else if((match = objectRegex.Match(inputString)).Success)
         {
-            result = new Tuple<bool, string>(true,
+            return new Tuple<bool, string>(true,
                 SelectJongSungInPattern(match, inputString, 
                 OBJECT_JONGSUNG, OBJECT_WITHOUT_JONGSUNG));
         }
         else if((match = subjectRegex.Match(inputString)).Success)
         {
-            result = new Tuple<bool, string>(true,
+            return new Tuple<bool, string>(true,
                 SelectJongSungInPattern(match, inputString,
                 SUBJECT_JONGSUNG, SUBJECT_WITHOUT_JONGSUNG));
         }
         else
         {
-            result = new Tuple<bool, string>(false, string.Empty);
+            return new Tuple<bool, string>(false, string.Empty);
         }
-
-        return result;
     }
 
     public Tuple<bool, string> CheckAndCorrect(in string inputString)
     {
-        Tuple<bool, string> result;
         Match match;
 
-        if((match = topicEndRegex.Match(inputString)).Success)
+        // CheckAndCorrect are not check topicEndRegex "[은는]$"
+        // This can cause fatal problems such as: "이채은" > "이채는" 
+
+        if((match = objectEndRegex.Match(inputString)).Success)
         {
-            result = new Tuple<bool, string>(true,
-                CorrectJongSung(match, inputString,
-                TOPIC_JONGSUNG, TOPIC_WITHOUT_JONGSUNG));
-        }
-        else if((match = objectEndRegex.Match(inputString)).Success)
-        {
-            result = new Tuple<bool, string>(true,
+            return new Tuple<bool, string>(true,
                 CorrectJongSung(match, inputString, 
                 OBJECT_JONGSUNG, OBJECT_WITHOUT_JONGSUNG));
         }
         else if((match = subjectEndRegex.Match(inputString)).Success)
         {
-            result = new Tuple<bool, string>(true,
+            return new Tuple<bool, string>(true,
                 CorrectJongSung(match, inputString,
                 SUBJECT_JONGSUNG, SUBJECT_WITHOUT_JONGSUNG));
         }
         else
         {
-            result = new Tuple<bool, string>(false, string.Empty);
+            return new Tuple<bool, string>(false, string.Empty);
         }
-        return result;
     }
 #endregion
 }

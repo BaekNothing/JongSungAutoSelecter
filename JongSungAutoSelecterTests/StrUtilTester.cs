@@ -121,20 +121,8 @@ public class Tester_StrUtility
     public void CorrectJongSung()
     {
         StrUtility strUtility = new StrUtility();
-        string originStr = "테스트는";
-        Assert.Equal("테스트는", strUtility.CorrectJongSung
-            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
-        originStr = "상품은";
-        Assert.Equal("상품은", strUtility.CorrectJongSung
-            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
-        originStr = "테스트은";
-        Assert.Equal("테스트는", strUtility.CorrectJongSung
-            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
-        originStr = "상품는";
-        Assert.Equal("상품은", strUtility.CorrectJongSung
-            (strUtility.topicEndRegex.Match(originStr) , originStr, "은", "는"));
         
-        originStr = "테스트을";
+        string originStr = "테스트을";
         Assert.Equal("테스트를", strUtility.CorrectJongSung
             (strUtility.objectEndRegex.Match(originStr) , originStr, "을", "를"));
         originStr = "상품를";

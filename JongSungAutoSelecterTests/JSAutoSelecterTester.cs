@@ -39,18 +39,32 @@ public class JSAutoSelecterTester
         Assert.Equal("테스트가", selecter.SetOneWord(originStr));
         originStr = "상품이/가";
         Assert.Equal("상품이", selecter.SetOneWord(originStr));
-       
+
+        originStr = "이채은";
+        Assert.Equal("이채은", selecter.SetOneWord(originStr));
     }
 
     [Fact]
     public void SetParagraph()
     {
+        JSAutoSelecter selecter = new JSAutoSelecter();
+        string originStr = "테스트은(는) 상품은(는) 테스트을(를) 상품을(를) 테스트이(가) 상품이(가)";
+        Assert.Equal("테스트는 상품은 테스트를 상품을 테스트가 상품이", selecter.SetParagraph(originStr));
         
-    }
+        originStr = "테스트은/는 상품은/는 테스트을/를 상품을/를 테스트이/가 상품이/가";
+        Assert.Equal("테스트는 상품은 테스트를 상품을 테스트가 상품이", selecter.SetParagraph(originStr));
 
-    [Fact]
-    public void SetParagraphWithThread()
-    {
-           
+        originStr = "테스트를 상품을 테스트가 상품이";
+        Assert.Equal("테스트를 상품을 테스트가 상품이", selecter.SetParagraph(originStr));
+
+        originStr = "테스트를 상품을 테스트가 상품이";
+        Assert.Equal("테스트를 상품을 테스트가 상품이", selecter.SetParagraph(originStr));
+
+        originStr = "테스트은 상품는 이채은";
+        Assert.Equal("테스트은 상품는 이채은", selecter.SetParagraph(originStr));
+
+        originStr = "테스트는 상품은 이채은";
+        Assert.Equal("테스트는 상품은 이채은", selecter.SetParagraph(originStr));
+        
     }
 }
